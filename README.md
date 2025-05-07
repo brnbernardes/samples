@@ -1,5 +1,5 @@
 # Studying
-Alumas anotações com base nos conteúdos das provas para OCP:  
+Alumas anotações com base nos conteúdos das provas para certificações de Oracle Database:  
  - 1Z0-082 - Administration Workshop
  - 1Z0-082 - SQL
  - 1Z0-083 - Backup Recovery
