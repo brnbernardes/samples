@@ -149,5 +149,5 @@ Após o ajuste, o CRS foi reiniciado para aplicar a nova configuração.
 
 Mas para essa explicação do porque do problema de horários deixo aqui ótimo artigo do Maicon Carneiro e a documentação da Oracle:
 * Blog do Maicon Carneiro – [Oracle SYSDATE com horário errado via listener](https://dibiei.blog/2021/06/03/oracle-sysdate-com-horario-errado-quando-conectando-via-listener-devido-ao-time-zone-do-grid-infrastructure/)
-* [Documentação Oracle: Time Zone Management](https://docs.oracle.com/en/cloud/paas/base-database/time-zone/index.html#ChangeHostTimeZone)
+* Documentação Oracle - [Time Zone Management](https://docs.oracle.com/en/cloud/paas/base-database/time-zone/index.html#ChangeHostTimeZone)
 
