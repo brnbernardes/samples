@@ -33,7 +33,7 @@ ORA-02063: preceding line from DBLINK_PROD
 
 ## 🔎 Análise
 
-### ✅ Verificação de UNDO
+###  Verificação de UNDO
 
 Inicialmente avaliamos a possibilidade de problema com retenção de UNDO. No entanto, a `UNDO` estava com `RETENTION GUARANTEE` e com baixa utilização.
 
@@ -57,7 +57,7 @@ SELECT tbm.tablespace_name,
 | ---------------- | -------- | -------- | -------- | ------- | --------- | --------------- |
 | UNDOTBS1         | 32.00    | 0.59     | 31.41    | 1.84%   | GUARANTEE | 3600            |
 
-#### 🧮 Histórico de uso:
+####  Histórico de uso:
 
 ```sql
 SELECT begin_time,
@@ -89,11 +89,14 @@ flashback_time="TO_TIMESTAMP(SYSDATE, 'DD-MM-YYYY HH24:MI:SS')"
 
 Esse valor indica que a exportação deve capturar os dados conforme o estado atual (`SYSDATE`) do banco **remoto** acessado via `DBLINK`.
 
-🔍 **Importante**: o SYSDATE é avaliado **no banco remoto**, que deve estar:
-
+ **Importante**:
+ 
+ 1) o SYSDATE é avaliado **no banco remoto**, que deve estar:
 * Em modo `ARCHIVELOG`
 * Com UNDO suficiente para garantir a consistência dos blocos lidos a partir daquele timestamp
 
+2) a execução da function SYSDATE para data e hora é no banco local que receberá o impdp
+   
 ---
 
 ### 📌 Diferença de horário entre CDB e PDB
@@ -126,22 +129,58 @@ Mas, ao nos conectarmos via TNS diretamente ao `PDB1` (como ocorre no `impdp`):
 
 ---
 
-## ✅ Soluções aplicadas
+##  Soluções aplicadas
 
 ### Solução paliativa:
 
 Utilizar um `FLASHBACK_TIME` **estático**, especificando manualmente um horário próximo ao esperado:
 
 ```bash
-flashback_time="TO_TIMESTAMP('08/05/2025 16:50:00', 'DD-MM-YYYY HH24:MI:SS')"
+flashback_time="TO_TIMESTAMP('08/05/2025 16:50:00', 'DD/MM/YYYY HH24:MI:SS')"
 ```
 
-### Solução definitiva:
+### ✅ Solução definitiva:
+#### Corrigido o **timezone do Grid Infrastructure (GI)** para o mesmo utilizado no server, no meu caso de UTC para AMERICA/SAO_PAULO
 
-Corrigido o **timezone do Grid Infrastructure (GI)** para o mesmo utilziado no server, no meu caso AMERICA/SAO_PAULO:
-
+Validar timezone atual do server:
 ```
-[grid@srv-oracle-hml ~]$ vim $GRID_HOME/crs/install/s_crsconfig_<hostname>_env.txt
+[root@srv-oracle-hml ~]# timedatectl
+      Local time: Fri 2025-05-09 17:54:29 -03
+  Universal time: Fri 2025-05-09 20:54:29 UTC
+        RTC time: Fri 2025-05-09 20:54:29
+       Time zone: America/Sao_Paulo (-03, -0300)
+     NTP enabled: yes
+NTP synchronized: no
+ RTC in local TZ: no
+      DST active: n/a
+```
+
+> $GRID_HOME/crs/install/s_crsconfig_<hostname>_env.txt
+```
+[grid@srv-oracle-hml ~]$ cat /u01/app/19.0.0.0/grid/crs/install/s_crsconfig_srv-oracle-hml_env.txt |egrep ^TZ
+TZ=UTC
+```
+Editar para:
+```
+[grid@srv-oracle-hml ~]$ cat /u01/app/19.0.0.0/grid/crs/install/s_crsconfig_srv-oracle-hml_env.txt
+TZ=America/Sao_Paulo
+```
+Descubra o database name
+```
+[root@srv-oracle-themahml01 ~]# $GRID_HOME/bin/srvctl config database -v
+HML01   /u01/app/oracle/product/19.0.0.0/dbhome_1       19.0.0.0.0
+```
+
+Altere o valor TZ no nível do banco de dados para o fuso horário desejado usando o seguinte comando:
+> srvctl setenv database -d <database_name> -t "TZ=<new_time_zone>"
+```
+[root@srv-oracle-themahml01 ~]# $GRID_HOME/bin/srvctl setenv database -d HML01 -t "TZ=America/Sao_Paulo"
+```
+Valide a alteração:
+>  srvctl getenv database -d <database_name>
+```
+[grid@srv-oracle-hml ~]$ srvctl getenv database -d HML01
+HML01:
 TZ=America/Sao_Paulo
 ```
 Após o ajuste, o CRS foi reiniciado para aplicar a nova configuração. 
