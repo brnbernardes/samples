@@ -37,7 +37,7 @@ ORA-02063: preceding line from DBLINK_PROD
 
 Inicialmente avaliamos a possibilidade de problema com retenção de UNDO. No entanto, a `UNDO` estava com `RETENTION GUARANTEE` e com baixa utilização.
 
-#### 📊 Consulta sobre espaço e retenção:
+#### Consulta sobre espaço e retenção:
 
 ```sql
 SELECT tbm.tablespace_name,
@@ -129,7 +129,7 @@ Mas, ao nos conectarmos via TNS diretamente ao `PDB1` (como ocorre no `impdp`):
 
 ---
 
-##  Soluções aplicadas
+## ✅ Soluções aplicadas
 
 ### Solução paliativa:
 
@@ -139,7 +139,7 @@ Utilizar um `FLASHBACK_TIME` **estático**, especificando manualmente um horári
 flashback_time="TO_TIMESTAMP('08/05/2025 16:50:00', 'DD/MM/YYYY HH24:MI:SS')"
 ```
 
-### ✅ Solução definitiva:
+### Solução definitiva:
 #### Corrigido o **timezone do Grid Infrastructure (GI)** para o mesmo utilizado no server, no meu caso de UTC para AMERICA/SAO_PAULO
 
 Validar timezone atual do server:
