@@ -4,7 +4,7 @@ Durante a execução de uma rotina corriqueira de importação com o Oracle Data
 
 ---
 
-## ⚠️ Erro encontrado
+## ⚠️ Erro encontrado:
 
 ```bash
 impdp '"sys/****@pdb1 as sysdba"' \
@@ -17,7 +17,7 @@ impdp '"sys/****@pdb1 as sysdba"' \
 
 > ❌ `ORA-01555: snapshot too old: rollback segment number % with name "_SYSSMU19_..." too small`
 
-### 🔍 Trecho do log:
+### 🔍 Trecho do log
 
 ```text
 ORA-31693: Table data object "OWNER_TESTE"."TABELA1" failed to load/unload and is being skipped due to error:
@@ -31,7 +31,7 @@ ORA-02063: preceding line from DBLINK_PROD
 
 ---
 
-## 🔎 Análise
+## 🔎 Análise:
 
 ###  Verificação de UNDO
 
@@ -99,7 +99,7 @@ Esse valor indica que a exportação deve capturar os dados conforme o estado at
    
 ---
 
-### 📌 Diferença de horário entre CDB e PDB
+### 📌 Diferença de horário entre CDB e PDB:
 
 Verificamos o horário no **CDB**:
 
@@ -129,9 +129,9 @@ Mas, ao nos conectarmos via TNS diretamente ao `PDB1` (como ocorre no `impdp`):
 
 ---
 
-## ✅ Soluções aplicadas
+## ✅ Soluções:
 
-### Solução paliativa:
+### 1) Solução paliativa:
 
 Utilizar um `FLASHBACK_TIME` **estático**, especificando manualmente um horário próximo ao esperado:
 
@@ -139,8 +139,8 @@ Utilizar um `FLASHBACK_TIME` **estático**, especificando manualmente um horári
 flashback_time="TO_TIMESTAMP('08/05/2025 16:50:00', 'DD/MM/YYYY HH24:MI:SS')"
 ```
 
-### Solução definitiva:
-#### Corrigido o **timezone do Grid Infrastructure (GI)** para o mesmo utilizado no server, no meu caso de UTC para AMERICA/SAO_PAULO
+### 2) Solução definitiva:
+#### Corrigir o **timezone do Grid Infrastructure (GI)** para o mesmo utilizado no server, no meu caso de UTC para AMERICA/SAO_PAULO
 
 Validar timezone atual do server:
 ```
@@ -155,26 +155,29 @@ NTP synchronized: no
       DST active: n/a
 ```
 
+Ajustar o arquivo
 > $GRID_HOME/crs/install/s_crsconfig_<hostname>_env.txt
 ```
 [grid@srv-oracle-hml ~]$ cat /u01/app/19.0.0.0/grid/crs/install/s_crsconfig_srv-oracle-hml_env.txt |egrep ^TZ
 TZ=UTC
 ```
-Editar para:
+
+Editar para
 ```
-[grid@srv-oracle-hml ~]$ cat /u01/app/19.0.0.0/grid/crs/install/s_crsconfig_srv-oracle-hml_env.txt
+[grid@srv-oracle-hml ~]$ cat /u01/app/19.0.0.0/grid/crs/install/s_crsconfig_srv-oracle-hml_env.txt |egrep ^TZ
 TZ=America/Sao_Paulo
 ```
-Descubra o database name
+
+Descubra o database_name
 ```
-[root@srv-oracle-themahml01 ~]# $GRID_HOME/bin/srvctl config database -v
+[root@srv-oracle-hml ~]# $GRID_HOME/bin/srvctl config database -v
 HML01   /u01/app/oracle/product/19.0.0.0/dbhome_1       19.0.0.0.0
 ```
 
-Altere o valor TZ no nível do banco de dados para o fuso horário desejado usando o seguinte comando:
+Altere o valor TZ no nível do banco de dados para o timezone desejado:
 > srvctl setenv database -d <database_name> -t "TZ=<new_time_zone>"
 ```
-[root@srv-oracle-themahml01 ~]# $GRID_HOME/bin/srvctl setenv database -d HML01 -t "TZ=America/Sao_Paulo"
+[root@srv-oracle-hml ~]# $GRID_HOME/bin/srvctl setenv database -d HML01 -t "TZ=America/Sao_Paulo"
 ```
 Valide a alteração:
 >  srvctl getenv database -d <database_name>
