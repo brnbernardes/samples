@@ -136,7 +136,7 @@ Utilizar um `FLASHBACK_TIME` **estático**, especificando manualmente um horári
 flashback_time="TO_TIMESTAMP('08/05/2025 16:50:00', 'DD-MM-YYYY HH24:MI:SS')"
 ```
 
-## Solução definitiva:
+### Solução definitiva:
 
 Corrigido o **timezone do Grid Infrastructure (GI)** para o mesmo utilziado no server, no meu caso AMERICA/SAO_PAULO:
 
