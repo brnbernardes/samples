@@ -1,4 +1,4 @@
-# 📌 ORA-01555 com IMPDP via DBLINK e uso de SYSDATE no FLASHBACK\_TIME
+# ORA-01555 com IMPDP via DBLINK e uso de SYSDATE no FLASHBACK\_TIME
 
 Durante a execução de uma rotina corriqueira de importação com o Oracle Data Pump (`impdp`) via `DBLINK`, nos deparamos com o seguinte erro ao utilizar `FLASHBACK_TIME` baseado em `SYSDATE`.
 
