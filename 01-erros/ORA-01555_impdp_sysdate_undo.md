@@ -118,7 +118,7 @@ Mas, ao nos conectarmos via TNS diretamente ao `PDB1` (como ocorre no `impdp`):
 ```
 [oracle@srv-oracle-hml ~]$ sqlplus sys/*****@PDB1 as sysdba
 
-16:51:15 SYS@PMMONTENEGROH> SELECT sysdate from dual;
+16:51:15 SYS@PDB1> SELECT sysdate from dual;
 
     SYSDATE
    -------------------
