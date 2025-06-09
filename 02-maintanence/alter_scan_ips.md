@@ -135,7 +135,7 @@ ALTER SYSTEM REGISTER;
 STAT[1]
 USRS[10]
 TIME[5]
-CNEX[//srvora-scan-v02:1521/APP_pdb_auto]
+CNEX[//srvora-scan-v02:1521/app_pdb_auto]
 ```
 
 * Validar que as conexões estão chegando por ele
