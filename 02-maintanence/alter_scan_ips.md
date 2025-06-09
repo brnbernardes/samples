@@ -29,7 +29,7 @@
 
 ---
 
-### 🔁 1. **Parar os SCANs e SCAN listeners**
+### 1. **Parar os SCANs e SCAN listeners**
 
 ```bash
 sudo su - grid
@@ -39,7 +39,7 @@ srvctl stop scan
 
 
 
-### 🗑️ 2. **Remover SCANs antigo**
+### 2. **Remover SCANs antigo**
 
 ```bash
 srvctl remove scan_listener
@@ -50,7 +50,7 @@ srvctl remove scan
 
 
 
-### ➕ 3. **Criar novo SCAN com o novo host e logo após adicionar SCAN_LISTENER**
+#### 3. **Criar novo SCAN com o novo host e logo após adicionar SCAN_LISTENER**
 
 ```bash
 srvctl add scan -n srvora-scan-v02
@@ -60,14 +60,14 @@ srvctl add scan_listener
 > O Oracle criará automaticamente até **3 SCAN VIPs** usando  `/etc/hosts` se não houver DNS configurado).
 
 
-### 🚀 4. **Iniciar novamente os serviços**
+#### 4. **Iniciar novamente os serviços**
 
 ```bash
 srvctl start scan
 srvctl start scan_listener
 ```
 
-### 🔍 6. **Validar se os novos IPs foram associados com sucesso**
+#### 6. **Validar se os novos IPs foram associados com sucesso**
 
 ```bash
 srvctl config scan
@@ -84,7 +84,7 @@ SCAN VIP name: scan2, IP: 192.168.56.73
 SCAN VIP name: scan3, IP: 192.168.56.74
 ```
 
-### 🧪 7. **Testar resolução e conexão**
+#### 7. **Testar resolução e conexão**
 
 ```bash
 nslookup srvora-scan-v02
@@ -92,13 +92,13 @@ tnsping srvora-scan-v02
 sqlplus user@//srvora-scan-v02:1521/servicename
 ```
 
-### 8. **Configurar o REMOTE LISTENER**
+#### 8. **Configurar o REMOTE LISTENER**
 ```
 ALTER SYSTEM SET remote_listener='srvora-scan-v02:1521' SCOPE=BOTH SID='*';
 ALTER SYSTEM REGISTER;
 ```
 
-### ✅ 9. **Atualizar TNS e aplicação**
+#### 9. **Atualizar TNS e aplicação**
 
 * Corrigir `CONFIG.dd` da aplicação para apontar para `srvora-scan-v02`
 
@@ -115,8 +115,25 @@ USRS[10]
 TIME[5]
 CNEX[//srvora-scan-v02:1521/APP_pdb_auto]
 ```
-  
+
 * Validar que as conexões estão chegando por ele
 
 
+#### 10. **Validar conexão via SERVIÇO**
+
+```
+oracle@srvora1[V02] ~]# sqlplus system@//srvora-scan-v02:1521/app_pdb_auto
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Sun Jun 8 23:40:23 2025
+Version 19.3.0.0.0
+Enter password: *****
+Connected
+23:40:25 SYSTEM@PDB1> select name, open_mode from v$pdbs;
+
+NAME     | OPEN_MODE
+-------- | ----------
+PDB1     | READ WRITE
+
+1 row selected.
+```
 
