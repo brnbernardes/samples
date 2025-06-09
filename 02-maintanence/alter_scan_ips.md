@@ -75,14 +75,19 @@ srvctl status scan
 srvctl status scan_listener
 ```
 
-Saída esperada (exemplo):
-
-```
-SCAN name: srvora-scan-v02, Network: 1
-SCAN VIP name: scan1, IP: 192.168.56.72
-SCAN VIP name: scan2, IP: 192.168.56.73
-SCAN VIP name: scan3, IP: 192.168.56.74
-```
+> Saída esperada:
+> ```
+> gird@srvora1[V02] ~]# srvctl config scan
+> SCAN name: srvora-scan-v02, Network: 1
+> Subnet IPv4: 192.168.56.0/255.255.255.0/enp0s3, static
+> Subnet IPv6:
+> SCAN 1 IPv4 VIP: 192.168.56.72
+> SCAN VIP is enabled.
+> SCAN 2 IPv4 VIP: 192.168.56.73
+> SCAN VIP is enabled.
+> SCAN 3 IPv4 VIP: 192.168.56.74
+> SCAN VIP is enabled.
+> ```
 
 #### 7. **Testar resolução e conexão**
 
@@ -91,21 +96,23 @@ nslookup srvora-scan-v02
 tnsping srvora-scan-v02
 sqlplus user@//srvora-scan-v02:1521/servicename
 ```
-```
-oracle@srvora1[V02] ~]# sqlplus system@//srvora-scan-v02:1521/app_pdb_auto
 
-SQL*Plus: Release 19.0.0.0.0 - Production on Sun Jun 8 23:40:23 2025
-Version 19.3.0.0.0
-Enter password: *****
-Connected
-23:40:25 SYSTEM@PDB1> select name, open_mode from v$pdbs;
-
-NAME     | OPEN_MODE
--------- | ----------
-PDB1     | READ WRITE
-
-1 row selected.
-```
+> Saída esperada:
+> ```
+> oracle@srvora1[V02] ~]# sqlplus system@//srvora-scan-v02:1521/app_pdb_auto
+> 
+> SQL*Plus: Release 19.0.0.0.0 - Production on Sun Jun 8 23:40:23 2025
+> Version 19.3.0.0.0
+> Enter password: *****
+> Connected
+> 23:40:25 SYSTEM@PDB1> select name, open_mode from v$pdbs;
+> 
+> NAME     | OPEN_MODE
+> -------- | ----------
+> PDB1     | READ WRITE
+> 
+> 1 row selected.
+> ```
 
 #### 8. **Configurar o REMOTE LISTENER**
 ```
