@@ -91,6 +91,21 @@ nslookup srvora-scan-v02
 tnsping srvora-scan-v02
 sqlplus user@//srvora-scan-v02:1521/servicename
 ```
+```
+oracle@srvora1[V02] ~]# sqlplus system@//srvora-scan-v02:1521/app_pdb_auto
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Sun Jun 8 23:40:23 2025
+Version 19.3.0.0.0
+Enter password: *****
+Connected
+23:40:25 SYSTEM@PDB1> select name, open_mode from v$pdbs;
+
+NAME     | OPEN_MODE
+-------- | ----------
+PDB1     | READ WRITE
+
+1 row selected.
+```
 
 #### 8. **Configurar o REMOTE LISTENER**
 ```
@@ -119,21 +134,5 @@ CNEX[//srvora-scan-v02:1521/APP_pdb_auto]
 * Validar que as conexões estão chegando por ele
 
 
-#### 10. **Validar conexão via SERVIÇO**
 
-```
-oracle@srvora1[V02] ~]# sqlplus system@//srvora-scan-v02:1521/app_pdb_auto
-
-SQL*Plus: Release 19.0.0.0.0 - Production on Sun Jun 8 23:40:23 2025
-Version 19.3.0.0.0
-Enter password: *****
-Connected
-23:40:25 SYSTEM@PDB1> select name, open_mode from v$pdbs;
-
-NAME     | OPEN_MODE
--------- | ----------
-PDB1     | READ WRITE
-
-1 row selected.
-```
 
