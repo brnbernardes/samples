@@ -35,15 +35,14 @@ srvctl remove scan
 
 
 
-### ➕ 3. **Criar novo SCAN com o novo nomem, logo após adicionar SCAN_LISTENER**
+### ➕ 3. **Criar novo SCAN com o novo host e logo após adicionar SCAN_LISTENER**
 
 ```bash
 srvctl add scan -n srvora-scan-v02
 srvctl add scan_listener
 ```
 
-> O Oracle criará automaticamente até **3 SCAN VIPs** usando round-robin DNS (ou `/etc/hosts` se não houver DNS configurado).
-
+> O Oracle criará automaticamente até **3 SCAN VIPs** usando  `/etc/hosts` se não houver DNS configurado).
 
 
 ### 🚀 4. **Iniciar novamente os serviços**
@@ -52,7 +51,6 @@ srvctl add scan_listener
 srvctl start scan
 srvctl start scan_listener
 ```
-
 
 ### 🔍 6. **Validar se os novos IPs foram associados com sucesso**
 
@@ -71,8 +69,6 @@ SCAN VIP name: scan2, IP: 192.168.56.73
 SCAN VIP name: scan3, IP: 192.168.56.74
 ```
 
-
-
 ### 🧪 7. **Testar resolução e conexão**
 
 ```bash
@@ -82,8 +78,13 @@ sqlplus user@//srvora-scan-v02:1521/servicename
 sqlplus sys@//srvora-scan-v02:1521/pdb1
 ```
 
+### 8. **Configurar o REMOTE LISTENER**
+```
+ALTER SYSTEM SET remote_listener='srvora-scan-v02:1521' SCOPE=BOTH SID='*';
+ALTER SYSTEM REGISTER;
+```
 
-### ✅ 8. **Atualizar TNS e aplicação**
+### ✅ 9. **Atualizar TNS e aplicação**
 
 * Corrigir `CONFIG.dd` da aplicação para apontar para `srvora-scan-v02`
 
@@ -102,5 +103,6 @@ CNEX[//srvora-scan-v02:1521/APP_pdb_auto]
 ```
   
 * Validar que as conexões estão chegando por ele
+
 
 
