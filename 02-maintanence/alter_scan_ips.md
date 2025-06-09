@@ -11,6 +11,21 @@
 >   192.168.56.73 srvora-scan-v02.localdomain srvora-scan-v02
 >   192.168.56.74 srvora-scan-v02.localdomain srvora-scan-v02
 >   ```
+>
+> * Parar aplicação `CONFIG.dd` com `STAT[2]`
+> 
+>   ```init
+>   # CONFIGURAÇÃO DE EXECUÇÃO DO CENÁRIO STRESS_TEST
+>   # --
+>   # STAT[1] → 1 = Ativo (executa o teste), 2 = Pausado (não executa, apenas aguarda)
+>   # USRS[15] → Quantidade de usuários simultâneos que vão gerar carga
+>   # TIME[2] → Tempo de execução do teste em minutos
+>   # CNEX[//srvora-scanv01:1521/APP_pdb_auto] → String de conexão completa para o banco (EZCONNECT)
+>   STAT[2]
+>   USRS[10]
+>   TIME[5]
+>   CNEX[//srvora-scan:1521/app_pdb_auto]
+>   ```
 
 ---
 
@@ -75,7 +90,6 @@ SCAN VIP name: scan3, IP: 192.168.56.74
 nslookup srvora-scan-v02
 tnsping srvora-scan-v02
 sqlplus user@//srvora-scan-v02:1521/servicename
-sqlplus sys@//srvora-scan-v02:1521/pdb1
 ```
 
 ### 8. **Configurar o REMOTE LISTENER**
